@@ -1,0 +1,26 @@
+{
+  "name": "ultimate-plugin",
+  "version": "1.0.0",
+  "description": "the ultimate plugin",
+  "main": "index.js",
+  "scripts": {
+    "start": "rm -rf ./dist/ ./.cache/ && parcel *.html",
+    "build": "rm -rf ./dist/ ./.cache/ && parcel build *.html && cd dist && rm ../dist.zip && zip -r ../dist.zip ."
+  },
+  "keywords": [
+    "ultimate",
+    "plugin"
+  ],
+  "author": "Ben Steward <bstewardcodes@gmail.com> (https://tehpsalmist.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-copy-file": "github:tehpsalmist/parcel-plugin-copy-file"
+  },
+  "dependencies": {
+    "@zenginehq/post-rpc-client": "^0.6.4",
+    "native-promise-only": "^0.8.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}
