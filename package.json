@@ -4,8 +4,8 @@
   "description": "the ultimate plugin",
   "main": "index.js",
   "scripts": {
-    "start": "rm -rf ./dist/ ./.cache/ && parcel *.html",
-    "build": "rm -rf ./dist/ ./.cache/ && parcel build *.html && cd dist && rm ../dist.zip && zip -r ../dist.zip ."
+    "start": "rm -rf ./dist/ && parcel serve *.html --https",
+    "build": "rm -rf ./dist/ && parcel build *.html && cd dist && rm ../dist.zip && zip -r ../dist.zip ."
   },
   "keywords": [
     "ultimate",

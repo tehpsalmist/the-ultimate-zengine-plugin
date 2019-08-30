@@ -2,7 +2,7 @@ import Client from '@zenginehq/post-rpc-client'
 
 export const client = new Client(document.location.ancestorOrigins[0])
 
-// client.logging(true)
+client.logging(true)
 client.start()
 
 export const getMe = callback => client.call('znHttp', {
@@ -10,9 +10,28 @@ export const getMe = callback => client.call('znHttp', {
   params: { method: 'get', url: '/users/me' }
 }, callback)
 
+export const getForms = test => client.call('znHttp', {
+  options: { apiVersion: 'v1' },
+  request: { method: 'get', url: '/forms' }
+})
+
+export const getWorkspaces = test => client.call('znHttp', {
+  options: { apiVersion: '1' },
+  request: { method: 'get', url: '/workspaces', params: { id: 1 } }
+}, test)
+
+export const saveRecord = (data, formId) => client.call('znHttp', {
+  options: { apiVersion: '1' },
+  request: {
+    method: 'post',
+    url: `/forms/${formId}/records`,
+    data: data
+  }
+})
+
 export const znConfirm = (message, callback) => {
   console.log('calling confirm')
-  client.call('confirm', { message }, callback, Infinity)
+  return client.call('confirm', { message }, callback, Infinity)
 }
 
 export const znMessage = (message, type, duration) => {
@@ -39,6 +58,44 @@ export const znResize = dimensions => {
   console.log('calling znResize')
   client.call('resize', { dimensions })
 }
+
+export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((resolve, reject) => {
+
+  const reader = new FileReader()
+
+  reader.onload = async e => {
+    const arrayBuffer = reader.result
+
+    const response = await client.call('znHttp', {
+      options: { apiVersion: 'v1' },
+      request: {
+        method: 'post',
+        url: `/forms/${formId}/uploads`,
+        data: {
+          fieldId: fieldId,
+          'form[id]': formId
+        },
+        multipart: {
+          key: 'file',
+          file: arrayBuffer,
+          name: file.name,
+          type: file.type
+        }
+      }
+    }, null, 60000)
+      .catch(err => err instanceof Error ? err : new Error(JSON.stringify(err)))
+      
+      if (response instanceof Error) {
+        return reject(response)
+      }
+
+    data[`field${fieldId}`] = response.data.data.hash
+
+    resolve(saveRecord(data, formId))
+  }
+
+  file && reader.readAsArrayBuffer(file)
+})
 
 // client.subscribe('item', (result, error) => {
 //   console.log(result)
