@@ -22,7 +22,7 @@ const App = props => {
   }}>
     <p>Hey! Imagine there is settings stuff here!</p>
     <h3>Pretty neat, huh?</h3>
-    <input type="file" onChange={e => uploadFile(1, 4, e.target.files[0]).catch(console.error)}></input>
+    <input type='file' onChange={e => uploadFile(1, 4, e.target.files[0]).catch(console.error)} />
   </main>
 }
 

@@ -2,7 +2,7 @@ import Client from '@zenginehq/post-rpc-client'
 
 export const client = new Client(document.location.ancestorOrigins[0])
 
-client.logging(true)
+client.logging(false)
 client.start()
 
 export const getMe = callback => client.call('znHttp', {
@@ -36,17 +36,17 @@ export const znConfirm = (message, callback) => {
 
 export const znMessage = (message, type, duration) => {
   console.log('calling znMessage')
-  client.call('message', { params: { message, type, duration } })
+  return client.call('message', { params: { message, type, duration } })
 }
 
 export const znModal = (options = {}, callback) => {
   console.log('calling znModal')
-  client.call('modal', { options }, callback, Infinity)
+  return client.call('modal', { options }, callback, Infinity)
 }
 
 export const znFiltersPanel = (options, callback) => {
   console.log('calling znFiltersPanel')
-  client.call('filtersPanel', { options }, callback, Infinity)
+  return client.call('filtersPanel', { options }, callback, Infinity)
 }
 
 export const znLocalStorage = (method, key, item, callback) => {
@@ -56,11 +56,10 @@ export const znLocalStorage = (method, key, item, callback) => {
 
 export const znResize = dimensions => {
   console.log('calling znResize')
-  client.call('resize', { dimensions })
+  return client.call('resize', { dimensions })
 }
 
 export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((resolve, reject) => {
-
   const reader = new FileReader()
 
   reader.onload = async e => {
@@ -84,10 +83,10 @@ export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((res
       }
     }, null, 60000)
       .catch(err => err instanceof Error ? err : new Error(JSON.stringify(err)))
-      
-      if (response instanceof Error) {
-        return reject(response)
-      }
+
+    if (response instanceof Error) {
+      return reject(response)
+    }
 
     data[`field${fieldId}`] = response.data.data.hash
 
@@ -97,6 +96,22 @@ export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((res
   file && reader.readAsArrayBuffer(file)
 })
 
-// client.subscribe('item', (result, error) => {
-//   console.log(result)
-// })
+export const znPluginData = (namespace, method, route) => {
+  return client.call('znPluginData', {
+    namespace: namespace,
+    method: method,
+    route: route,
+    options: {
+      params: {
+        id: 1
+      },
+      headers: {
+        'x-my-custom-plugin-header': 'hello'
+      }
+    }
+  }, null, 60000)
+}
+
+client.subscribe('item', (result, error) => {
+  console.log(result)
+})

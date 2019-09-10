@@ -1,4 +1,5 @@
 {
+  "icon": "icon-wrench",
   "views": [
     {
       "type": "inline",
@@ -27,7 +28,11 @@
     {
       "type": "inline",
       "location": "zn-plugin-form-top",
-      "src": "/button.html"
+      "src": "/form-area.html",
+      "defaultDimensions": {
+        "width": "122px",
+        "height": "120px"
+      }
     },
     {
       "type": "inline",

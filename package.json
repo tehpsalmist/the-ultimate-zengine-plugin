@@ -18,7 +18,8 @@
     "parcel-plugin-copy-file": "github:tehpsalmist/parcel-plugin-copy-file"
   },
   "dependencies": {
-    "@zenginehq/post-rpc-client": "^0.6.4",
+    "@zenginehq/post-rpc-client": "^0.7.1",
+    "ifresize": "github:tehpsalmist/ifresize",
     "native-promise-only": "^0.8.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"

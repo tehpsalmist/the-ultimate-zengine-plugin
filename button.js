@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, client, znMessage } from './post-rpc'
-import { useSubscription } from './hooks';
+import { znConfirm, znMessage } from './post-rpc'
+import { useSubscription, useRequestMoreRoom } from './hooks'
+import { sizer } from './resizer'
 
 const App = props => {
   const [bg, setBg] = useState('green')
 
   useSubscription('item', item => console.log('item:', item))
 
+  useEffect(() => {
+    sizer.autoSize()
+  })
+
   return <div
     style={{
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
+      flexWrap: 'nowrap',
       alignItems: 'center',
       height: '100vh',
+      width: '100%'
     }}
   >
     <button
@@ -28,12 +35,7 @@ const App = props => {
         color: 'white'
       }}
       onClick={e => {
-        znConfirm(`Want to make the button ${bg === 'green' ? 'red' : 'green'}?`, (firstArg, secondArg) => {
-          console.log('firstArg', firstArg)
-          console.log('secondArg', secondArg)
-        })
-        // .then((firstArg, secondArg) => (console.log('firstSuccessArg', firstArg) || console.log('secondSuccessArg', secondArg)))
-        // .catch((firstArg, secondArg) => (console.log('firstErrArg', firstArg) || console.log('secondErrArg', secondArg)))
+        znConfirm(`Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`, (err, yes) => yes && setBg(bg === 'green' ? 'red' : 'green'))
       }}
     >
       Callback!
@@ -51,23 +53,14 @@ const App = props => {
       }}
       onClick={e => {
         znConfirm(`Want to make the button ${bg === 'green' ? 'red' : 'green'}?`)
-          .then((firstArg, secondArg) => {
-            console.log('firstSuccessArg', firstArg)
-            console.log('secondSuccessArg', secondArg)
-          })
-          .catch((firstArg, secondArg) => {
-            console.log('firstErrArg', firstArg)
-            console.log('secondErrArg', secondArg)
-          })
-        znMessage('button click', 'error')
+          .then(yes => yes && setBg(bg === 'green' ? 'red' : 'green'))
+        znMessage('button click', 'saved')
       }}
     >
       Promise!
     </button>
+    Hey There!
   </div>
 }
 
 ReactDOM.render(<App />, document.getElementById('app'))
-
-  // .then(() => setBg(bg === 'green' ? 'red' : 'green'))
-

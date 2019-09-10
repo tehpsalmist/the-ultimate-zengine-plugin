@@ -60,28 +60,43 @@ export const useMutationObserver = () => {
   }, [])
 }
 
-export const useGetBoundingClientRect = () => {
-  const [{ x, y }, setBoundingRect] = useState({})
+export const useRequestMoreRoom = () => {
+  const [haveEnough, setHaveEnough] = useState(false)
 
   useLayoutEffect(() => {
-    const width = document.getElementById('root').scrollWidth
-    const height = document.getElementById('root').scrollHeight
+    const width = document.getElementById('app').scrollWidth
+    const height = document.getElementById('app').scrollHeight
 
-    if (width !== x || height !== y) {
+    console.log(window.innerWidth, window.outerWidth)
+
+    if (!haveEnough && (width > window.innerWidth || height > window.innerHeight)) {
       const dimensions = { x: width, y: height }
+
       client.call('resize', { dimensions }, (result, err) => {
         console.log(result)
         console.log(err)
+        setHaveEnough(true)
       })
-      setBoundingRect(dimensions)
     }
+
+    const resizeListener = e => {
+      setHaveEnough(false)
+    }
+
+    addEventListener('resize', resizeListener)
+
+    return () => removeEventListener('resize', resizeListener)
   })
 }
 
-export const useJRPMethod = (method, params, callback) => {
+export const useJRPMethod = (method, params, callback, timeoutMs) => {
   useEffect(() => {
-    client.call(method, { plugin: { apiVersion: '1.0.1' }, params }, callback)
+    client.call(method, { plugin: { apiVersion: '1.0.1' }, params }, callback, timeoutMs)
   }, [method, params, callback])
+}
+
+export const useAppContext = (callback) => {
+  useJRPMethod('context', null, callback, 60000)
 }
 
 export const useZnHttp = (params, callback) => useJRPMethod('znHttp', params, callback)
