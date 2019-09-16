@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, znMessage } from './post-rpc'
+import { znConfirm, znMessage, client } from './post-rpc'
 import { useSubscription, useRequestMoreRoom } from './hooks'
 import { sizer } from './resizer'
 
@@ -12,6 +12,11 @@ const App = props => {
   useEffect(() => {
     sizer.autoSize()
   })
+
+  const context = () => {
+    client.call({ method: 'context', timeout: 60000 })
+      .then(console.log)
+  }
 
   return <div
     style={{
@@ -36,6 +41,7 @@ const App = props => {
       }}
       onClick={e => {
         znConfirm(`Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`, (err, yes) => yes && setBg(bg === 'green' ? 'red' : 'green'))
+        context()
       }}
     >
       Callback!
@@ -55,6 +61,7 @@ const App = props => {
         znConfirm(`Want to make the button ${bg === 'green' ? 'red' : 'green'}?`)
           .then(yes => yes && setBg(bg === 'green' ? 'red' : 'green'))
         znMessage('button click', 'saved')
+
       }}
     >
       Promise!

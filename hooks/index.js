@@ -15,7 +15,7 @@ export const useSubscription = (event, callback) => {
 
 export const useReloadListener = () => {
   const callback = () => {
-    client.call('reload', { url: window.location.href })
+    client.call({ method: 'reload', args: { url: window.location.href } })
   }
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export const useReloadListener = () => {
 
 export const usePopStateListener = () => {
   const callback = () => {
-    client.call('urlUpdate', { url: window.location.href })
+    client.call({ method: 'urlUpdate', args: { url: window.location.href } })
   }
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const useMutationObserver = () => {
         if (oldHref !== window.location.href) {
           oldHref = window.location.href
 
-          client.call('urlUpdate', { url: window.location.href })
+          client.call({ method: 'urlUpdate', args: { url: window.location.href } })
         }
       })
     })
@@ -72,10 +72,14 @@ export const useRequestMoreRoom = () => {
     if (!haveEnough && (width > window.innerWidth || height > window.innerHeight)) {
       const dimensions = { x: width, y: height }
 
-      client.call('resize', { dimensions }, (result, err) => {
-        console.log(result)
-        console.log(err)
-        setHaveEnough(true)
+      client.call({
+        method: 'resize',
+        args: { dimensions },
+        callback: (result, err) => {
+          console.log(result)
+          console.log(err)
+          setHaveEnough(true)
+        }
       })
     }
 
@@ -89,16 +93,18 @@ export const useRequestMoreRoom = () => {
   })
 }
 
-export const useJRPMethod = (method, params, callback, timeoutMs) => {
+export const useJRPMethod = (details) => {
+  const { method, args, callback, timeout = 5000 } = details
+
   useEffect(() => {
-    client.call(method, { plugin: { apiVersion: '1.0.1' }, params }, callback, timeoutMs)
-  }, [method, params, callback])
+    client.call({ method, args, callback, timeout })
+  }, [method, args, callback, timeout])
 }
 
 export const useAppContext = (callback) => {
-  useJRPMethod('context', null, callback, 60000)
+  useJRPMethod({ method: 'context', callback, timeout: 70000})
 }
 
-export const useZnHttp = (params, callback) => useJRPMethod('znHttp', params, callback)
-
-export const useGetMe = callback => useZnHttp({ method: 'get', url: '/users/me' }, callback)
+export const useLocationTest = () => {
+  useJRPMethod({ method: 'location', args: { method: 'href' }, callback: console.log })
+}

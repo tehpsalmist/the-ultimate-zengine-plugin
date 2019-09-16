@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { render } from 'react-dom'
 import { znMessage, znPluginData } from './post-rpc'
-import { useSubscription, useAppContext } from './hooks'
+import { useSubscription, useAppContext, useLocationTest } from './hooks'
 
 znMessage('wut wut')
 
@@ -16,6 +16,7 @@ const App = props => {
   }, [])
 
   useAppContext(appContextReceiver)
+  useLocationTest()
 
   const backendFunc = () => {
     znPluginData('ultimate-plugin', 'get', '/service')
