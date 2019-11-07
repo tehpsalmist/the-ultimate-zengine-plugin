@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { render } from 'react-dom'
 import { uploadFile, getWorkspaces, getForms } from './post-rpc'
 import '@babel/polyfill'
+import { useLocationSetterTest } from './hooks'
 
 const App = props => {
   useEffect(() => {
@@ -11,6 +12,8 @@ const App = props => {
       .then(f => console.log(f))
       .catch(console.error)
   }, [])
+
+  useLocationSetterTest()
 
   return <main style={{
     display: 'flex',

@@ -46,6 +46,10 @@
     {
       "type": "fullPage",
       "src": "/main.html"
+    },
+    {
+      "type": "modal",
+      "src": "/modal.html"
     }
   ]
 }

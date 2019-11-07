@@ -17,9 +17,10 @@ export const getMe = callback => client.call({
 export const getForms = test => client.call({
   method: 'znHttp',
   args: {
-  options: { apiVersion: 'v1' },
-  request: { method: 'get', url: '/forms' }
-}})
+    options: { apiVersion: 'v1' },
+    request: { method: 'get', url: '/forms' }
+  }
+})
 
 export const getWorkspaces = callback => client.call({
   method: 'znHttp',
@@ -63,7 +64,7 @@ export const znMessage = (message, type, duration) => {
 export const znModal = (options = {}, callback) => {
   console.log('calling znModal')
   return client.call({
-    method: 'modal',
+    method: 'openModal',
     args: { options },
     callback,
     timeout: Infinity
@@ -159,8 +160,7 @@ export const znPluginData = (namespace, method, route) => {
 
 const locationCache = {};
 
-export const locationAsync = (method, args) => {
-  args = args || []
+export const locationAsync = (method, args = []) => {
   return client.call({ method: 'location', args: { method, args } })
 }
 
@@ -197,6 +197,9 @@ export const $location = {
     } else {
       return locationCache.path
     }
+  },
+  navigate: (...args) => {
+    return locationAsync('navigate', args)
   }
 }
 

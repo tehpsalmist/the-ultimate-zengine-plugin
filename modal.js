@@ -5,9 +5,10 @@ import { useSubscription, useRequestMoreRoom } from './hooks'
 import { sizer } from './resizer'
 
 const App = props => {
-  const [bg, setBg] = useState('green')
+  const [parentBg, setParentBg] = useState('purple')
 
-  useSubscription('item', item => console.log('item:', item))
+  useSubscription('log-to-console', item => console.log('modal log:', item))
+  useSubscription('close', item => console.log('close log:', item))
 
   useEffect(() => {
     sizer.autoSize()
@@ -21,52 +22,65 @@ const App = props => {
   return <div
     style={{
       display: 'flex',
-      justifyContent: 'flex-start',
-      flexWrap: 'nowrap',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
       alignItems: 'center',
       height: '100vh',
       width: '100%'
     }}
   >
+    <label style={{ width: '100%' }}>
+      Main Background Color:
+      <input onChange={e => setParentBg(e.target.value)} value={parentBg} />
+    </label>
     <button
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
         borderRadius: '4px',
         border: 'none',
-        backgroundColor: bg,
+        backgroundColor: 'blue',
         color: 'white'
       }}
       onClick={e => {
-        znConfirm(`<script>alert('oops!')</script>Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`, (err, yes) => yes && setBg(bg === 'green' ? 'red' : 'green'))
-        context()
+        client.call({ method: 'log-to-console', args: { payload: 'a message from the modal' } })
       }}
     >
-      Callback!
+      Log stuff to the consoles!
     </button>
     <button
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
         borderRadius: '4px',
         border: 'none',
-        backgroundColor: bg,
+        backgroundColor: 'blue',
         color: 'white'
       }}
       onClick={e => {
-        znConfirm(`Want to make the button ${bg === 'green' ? 'red' : 'green'}?`)
-          .then(yes => yes && setBg(bg === 'green' ? 'red' : 'green'))
-        znMessage('button click', 'saved')
-
+        client.call({ method: 'background-update', args: { payload: parentBg } })
       }}
     >
-      Promise!
+      Change Main Background Color
     </button>
-    Hey There!
+    <button
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '4px',
+        border: 'none',
+        backgroundColor: 'red',
+        color: 'white'
+      }}
+      onClick={e => {
+        client.call({ method: 'close', args: { payload: {} } })
+      }}
+    >
+      Close
+    </button>
   </div>
 }
 
