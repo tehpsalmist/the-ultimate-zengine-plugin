@@ -9,6 +9,7 @@ const App = props => {
 
   useSubscription('log-to-console', item => console.log('modal log:', item))
   useSubscription('close', item => console.log('close log:', item))
+  useSubscription('something-else', item => console.log('something else log:', item))
 
   useEffect(() => {
     sizer.autoSize()
@@ -61,6 +62,7 @@ const App = props => {
       }}
       onClick={e => {
         client.call({ method: 'background-update', args: { payload: parentBg } })
+        client.call({ method: 'something-else', args: { payload: 'yo something else' } })
       }}
     >
       Change Main Background Color

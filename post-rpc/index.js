@@ -22,6 +22,11 @@ export const getForms = test => client.call({
   }
 })
 
+export const znToolTip = (ref, message, side) => {
+  const element = ref.current
+  console.log(element.screenX)
+}
+
 export const getWorkspaces = callback => client.call({
   method: 'znHttp',
   args: {
@@ -64,7 +69,7 @@ export const znMessage = (message, type, duration) => {
 export const znModal = (options = {}, callback) => {
   console.log('calling znModal')
   return client.call({
-    method: 'openModal',
+    method: 'modal',
     args: { options },
     callback,
     timeout: Infinity
