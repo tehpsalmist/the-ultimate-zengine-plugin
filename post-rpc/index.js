@@ -22,9 +22,15 @@ export const getForms = test => client.call({
   }
 })
 
-export const znToolTip = (ref, message, side) => {
-  const element = ref.current
-  console.log(element.screenX)
+export const znToolTip = (ref, message, side, timeout) => {
+  const { top, left, bottom, right } = ref.current.getBoundingClientRect()
+
+  client.call({
+    method: 'openTooltip',
+    args: {
+      options: { side, message, top, left, bottom, right, timeout }
+    }
+  })
 }
 
 export const getWorkspaces = callback => client.call({

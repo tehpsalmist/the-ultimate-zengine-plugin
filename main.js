@@ -10,6 +10,7 @@ const App = props => {
   const [count, setCount] = useState(0)
   const modalButtonRef = useRef()
   const counterButtonRef = useRef()
+  const firstButtonRef = useRef()
 
   useSubscription('background-update', color => setBGColor(color))
   useSubscription('log-to-console', item => {
@@ -57,7 +58,17 @@ const App = props => {
     height: '100vh'
   }}>
     <p>Hey! Full page stuff!</p>
-    <button onClick={e => znMessage('Hey!', 'saved', 1000)}>Trigger Events!</button>
+    <button
+      ref={firstButtonRef}
+      onMouseEnter={e => {
+        znToolTip(firstButtonRef, 'top left?', 'left')
+      }}
+      onMouseLeave={e => {
+        client.call({ method: 'closeTooltip' })
+      }}
+      onClick={e => znMessage('Hey!', 'saved', 1000)}>
+      Trigger Events!
+    </button>
     <button
       ref={modalButtonRef}
       onMouseEnter={e => {
@@ -70,9 +81,10 @@ const App = props => {
       Open a Modal!
     </button>
     <button
+      style={{ width: '300px', height: '300px' }}
       ref={counterButtonRef}
       onMouseEnter={e => {
-        client.call({ method: 'openTooltip', args: { options: { side: 'bottom', message: 'yay! tooltip!' } } })
+        znToolTip(counterButtonRef, 'tooltip!', 'right')
       }}
       onMouseLeave={e => {
         client.call({ method: 'closeTooltip' })

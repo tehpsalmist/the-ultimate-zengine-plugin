@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, znMessage, client } from './post-rpc'
+import { znConfirm, znMessage, znToolTip, client } from './post-rpc'
 import { useSubscription, useRequestMoreRoom } from './hooks'
 import { sizer } from './resizer'
 
 const App = props => {
   const [bg, setBg] = useState('green')
+  const callbackButtonRef = useRef()
 
   useSubscription('item', item => console.log('item:', item))
 
@@ -29,6 +30,13 @@ const App = props => {
     }}
   >
     <button
+      ref={callbackButtonRef}
+      onMouseEnter={e => {
+        znToolTip(callbackButtonRef, 'open a modal!', 'top', 2000)
+      }}
+      onMouseLeave={e => {
+        client.call({ method: 'closeTooltip' })
+      }}
       style={{
         display: 'flex',
         justifyContent: 'center',
