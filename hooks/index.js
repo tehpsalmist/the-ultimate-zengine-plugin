@@ -101,8 +101,19 @@ export const useJRPMethod = (details) => {
   }, [method, args, callback, timeout])
 }
 
-export const useAppContext = (callback) => {
-  useJRPMethod({ method: 'context', callback, timeout: 70000})
+let context
+
+client.call({ method: 'context' })
+  .then(result => {
+    console.log(result)
+    context = result
+  })
+  .catch(err => {
+    console.error(err)
+  })
+
+export const useAppContext = () => {
+  return context
 }
 
 export const useLocationTest = () => {

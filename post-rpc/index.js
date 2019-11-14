@@ -29,7 +29,8 @@ export const znToolTip = (ref, message, side, timeout) => {
     method: 'openTooltip',
     args: {
       options: { side, message, top, left, bottom, right, timeout }
-    }
+    },
+    timeout: Infinity
   })
 }
 
@@ -55,7 +56,6 @@ export const saveRecord = (data, formId) => client.call({
 })
 
 export const znConfirm = (message, callback) => {
-  console.log('calling confirm')
   return client.call({
     method: 'confirm',
     args: { message },
@@ -65,7 +65,6 @@ export const znConfirm = (message, callback) => {
 }
 
 export const znMessage = (message, type, duration) => {
-  console.log('calling znMessage')
   return client.call({
     method: 'message',
     args: { params: { message, type, duration } }
@@ -73,7 +72,6 @@ export const znMessage = (message, type, duration) => {
 }
 
 export const znModal = (options = {}, callback) => {
-  console.log('calling znModal')
   return client.call({
     method: 'modal',
     args: { options },
@@ -82,8 +80,17 @@ export const znModal = (options = {}, callback) => {
   })
 }
 
+export const znDropdown = (options = {}, ref) => {
+  const { top, left, bottom, right } = ref.current.getBoundingClientRect()
+
+  return client.call({
+    method: 'dropdown',
+    args: { options: { ...options, left, right, top, bottom } },
+    timeout: Infinity
+  })
+}
+
 export const znFiltersPanel = (options, callback) => {
-  console.log('calling znFiltersPanel')
   return client.call({
     method: 'filtersPanel',
     args: { options },
@@ -93,7 +100,6 @@ export const znFiltersPanel = (options, callback) => {
 }
 
 export const znLocalStorage = (method, key, item, callback) => {
-  console.log('calling znLocalStorage')
   return client.call({
     method: 'znLocalStorage',
     args: { method, key, item }
@@ -101,7 +107,6 @@ export const znLocalStorage = (method, key, item, callback) => {
 }
 
 export const znResize = dimensions => {
-  console.log('calling znResize')
   return client.call({
     method: 'resize',
     args: { dimensions }
@@ -213,7 +218,3 @@ export const $location = {
     return locationAsync('navigate', args)
   }
 }
-
-client.subscribe('item', (result, error) => {
-  console.log(result)
-})
