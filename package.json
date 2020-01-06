@@ -18,10 +18,11 @@
     "parcel-plugin-copy-file": "github:tehpsalmist/parcel-plugin-copy-file"
   },
   "dependencies": {
-    "@zenginehq/post-rpc-client": "^0.8.1",
-    "ifresize": "github:tehpsalmist/ifresize",
+    "@zenginehq/zengine-sdk": "github:ZengineHQ/zengine-sdk",
+    "content-sizer": "github:ZengineHQ/content-sizer",
     "native-promise-only": "^0.8.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
-  }
+  },
+  "browserslist": "last 2 Chrome versions"
 }

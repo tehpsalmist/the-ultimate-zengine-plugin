@@ -1,10 +1,10 @@
 {
-  "icon": "icon-wrench",
+  "icon": "icon-gauge",
   "views": [
     {
       "type": "inline",
       "location": "zn-top-nav",
-      "src": "/button.html"
+      "src": "/top-nav.html"
     },
     {
       "type": "inline",
@@ -46,10 +46,6 @@
     {
       "type": "fullPage",
       "src": "/main.html"
-    },
-    {
-      "type": "modal",
-      "src": "/modal.html"
     }
   ]
 }

@@ -1,39 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, znMessage, znToolTip, client, znDropdown } from './post-rpc'
+import { znConfirm, rpcClient, znMessage, znFiltersPanel, autoSize } from '@zenginehq/zengine-sdk'
 import { useSubscription, useRequestMoreRoom } from './hooks'
-import { sizer } from './resizer'
 
 const App = props => {
   const [bg, setBg] = useState('green')
+  const [longer, setLonger] = useState(false)
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
   const confirmButtonRef = useRef()
   const dropdownButtonRef = useRef()
 
   useEffect(() => {
-    Promise.all([
-      client.call({ method: 'context' }),
-      client.call({ method: 'context' }),
-      client.call({ method: 'context' }),
-      client.call({ method: 'context' }),
-      client.call({ method: 'context' }),
-      client.call({ method: 'context' })
-    ])
-      .then(res => console.log(res.map(r => !!r)))
-      .catch(err => console.error(err))
-    sizer.autoSize()
-  })
+    autoSize()
+  }, [])
 
-  useSubscription('background-update', color => setBGColor(color))
-  useSubscription('log-to-console', item => {
-    console.log('log:', item)
-    client.call({
-      method: 'log-to-console',
-      args: {
-        payload: 'Successfully logged in both consoles!'
-      }
-    })
-  })
+  // useSubscription('background-update', color => setBGColor(color))
+  // useSubscription('log-to-console', item => {
+  //   console.log('log:', item)
+  //   client.call({
+  //     method: 'log-to-console',
+  //     args: {
+  //       payload: 'Successfully logged in both consoles!'
+  //     }
+  //   })
+  // })
 
   return <div
     style={{
@@ -41,6 +31,7 @@ const App = props => {
       justifyContent: 'flex-start',
       flexWrap: 'nowrap',
       alignItems: 'center',
+      whiteSpace: 'nowrap',
       height: '100vh',
       width: '100%'
     }}
@@ -48,10 +39,10 @@ const App = props => {
     <button
       ref={confirmButtonRef}
       onMouseEnter={e => {
-        znToolTip(confirmButtonRef, 'open a modal!', 'top', 2000)
+        // znToolTip(confirmButtonRef, 'open a modal!', 'left', 2000)
       }}
       onMouseLeave={e => {
-        client.call({ method: 'closeTooltip' })
+        // client.call({ method: 'closeTooltip' })
       }}
       style={{
         display: 'flex',
@@ -64,10 +55,17 @@ const App = props => {
         color: 'white'
       }}
       onClick={e => {
-        znConfirm(`<script>alert('oops!')</script>Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`, (err, yes) => yes && setBg(bg === 'green' ? 'red' : 'green'))
+        setLonger(!longer)
+        znConfirm(`Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`, (err, yes) => yes && setBg(bg === 'green' ? 'red' : 'green'))
       }}
     >
-      Change Colors
+      {longer
+        ? <>
+          yay colors lets see if this wraps or not or whatever
+          <p>wut</p>
+          <h2>Yeah</h2>
+        </>
+        : 'Colors'}
     </button>
     <button
       ref={dropdownButtonRef}
@@ -75,32 +73,46 @@ const App = props => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
+        // height: '100%',
         borderRadius: '4px',
         border: 'none',
         backgroundColor: bg,
         color: 'white'
       }}
       onClick={e => {
-        if (dropdownIsOpen) return
+        znFiltersPanel({
+          formId: 2
+        }).then(filter => console.log(filter))
+        // znConfirm(`Want to make the buttons ${bg === 'green' ? 'red' : 'green'}?`)
+        //   .then(yes => {
+        //     if (yes) {
+        //       setBg(bg === 'green' ? 'red' : 'green')
+        //       znMessage('color set!', 'saved', 1000)
+        //     } else {
+        //       znMessage('color denied!', 'error')
+        //     }
+        //   })
 
-        setDropdownIsOpen(true)
-        znDropdown({
-          side: 'top',
-          src: '/dropdown.html',
-          events: [
-            { name: 'background-update', listening: true },
-            { name: 'log-to-console', listening: true, sending: true }
-          ]
-        }, dropdownButtonRef)
-          .then(result => {
-            console.log('closed:', result)
-            setDropdownIsOpen(false)
-          })
+        // if (dropdownIsOpen) return
+
+        // setDropdownIsOpen(true)
+        // znDropdown({
+        //   side: 'top',
+        //   src: '/dropdown.html',
+        //   events: [
+        //     { name: 'background-update', listening: true },
+        //     { name: 'log-to-console', listening: true, sending: true }
+        //   ]
+        // }, dropdownButtonRef)
+        //   .then(result => {
+        //     console.log('closed:', result)
+        //     setDropdownIsOpen(false)
+        //   })
       }}
     >
-      Open Dropdown
+      Dropdown
     </button>
+    yo yo yo
   </div>
 }
 

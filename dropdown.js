@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, znMessage, client } from './post-rpc'
+import { znConfirm, znMessage, rpcClient, autoSize, znOpenDropdown } from '@zenginehq/zengine-sdk'
 import { useSubscription, useRequestMoreRoom, useAppContext } from './hooks'
-import { sizer } from './resizer'
 
 const people = [
-  { name: 'Ben', location: 'Sellersville' },
   { name: 'Marc', location: 'Collegeville' },
   { name: 'Ted', location: 'Langhorne' },
   { name: 'Anna', location: 'Pikes Peak' },
@@ -13,8 +11,10 @@ const people = [
 ]
 
 const App = props => {
+  const ref = useRef()
+
   useEffect(() => {
-    sizer.autoSize()
+    autoSize()
   })
 
   const context = useAppContext()
@@ -36,11 +36,23 @@ const App = props => {
       style={{ cursor: 'pointer' }}
       key={name}
       onClick={e => {
-        client.call({ method: 'close', args: { payload: { name, location } } })
+        rpcClient.call({ method: 'close', args: { key: 'close', payload: { name, location } } })
       }}>
       <span>{name}:{' '}</span>
       <span>{location}</span>
     </li>)}
+    <li ref={ref} onClick={e => {
+      const { top, right, left, bottom } = ref.current.getBoundingClientRect()
+
+      znOpenDropdown({
+        top,
+        right,
+        left,
+        bottom,
+        side: 'right',
+        src: '/dropdown.html'
+      })
+    }}>Moar dropdown</li>
   </ul>
 }
 

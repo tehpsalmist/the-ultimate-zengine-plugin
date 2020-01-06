@@ -1,11 +1,6 @@
-import Client from '@zenginehq/post-rpc-client'
+import { rpcClient } from '@zenginehq/zengine-sdk'
 
-export const client = new Client(document.location.ancestorOrigins[0])
-
-client.logging(false)
-client.start()
-
-export const getMe = callback => client.call({
+export const getMe = callback => rpcClient.call({
   method: 'znHttp',
   args: {
     plugin: { apiVersion: '1.0.1' },
@@ -14,7 +9,7 @@ export const getMe = callback => client.call({
   callback
 })
 
-export const getForms = test => client.call({
+export const getForms = test => rpcClient.call({
   method: 'znHttp',
   args: {
     options: { apiVersion: 'v1' },
@@ -25,16 +20,15 @@ export const getForms = test => client.call({
 export const znToolTip = (ref, message, side, timeout) => {
   const { top, left, bottom, right } = ref.current.getBoundingClientRect()
 
-  client.call({
+  rpcClient.call({
     method: 'openTooltip',
     args: {
       options: { side, message, top, left, bottom, right, timeout }
-    },
-    timeout: Infinity
+    }
   })
 }
 
-export const getWorkspaces = callback => client.call({
+export const getWorkspaces = callback => rpcClient.call({
   method: 'znHttp',
   args: {
     options: { apiVersion: '1' },
@@ -43,7 +37,7 @@ export const getWorkspaces = callback => client.call({
   callback
 })
 
-export const saveRecord = (data, formId) => client.call({
+export const saveRecord = (data, formId) => rpcClient.call({
   method: 'znHttp',
   args: {
     options: { apiVersion: '1' },
@@ -55,61 +49,31 @@ export const saveRecord = (data, formId) => client.call({
   }
 })
 
-export const znConfirm = (message, callback) => {
-  return client.call({
-    method: 'confirm',
-    args: { message },
-    callback,
-    timeout: Infinity
-  })
-}
-
-export const znMessage = (message, type, duration) => {
-  return client.call({
-    method: 'message',
-    args: { params: { message, type, duration } }
-  })
-}
-
-export const znModal = (options = {}, callback) => {
-  return client.call({
+export const znModal = async (options = {}, callback) => {
+  const id = await rpcClient.call({
     method: 'modal',
     args: { options },
-    callback,
-    timeout: Infinity
+    callback
   })
+
+  return id
 }
 
-export const znDropdown = (options = {}, ref) => {
+export const znDropdown = async (options = {}, ref) => {
   const { top, left, bottom, right } = ref.current.getBoundingClientRect()
 
-  return client.call({
+  const id = await rpcClient.call({
     method: 'dropdown',
-    args: { options: { ...options, left, right, top, bottom } },
-    timeout: Infinity
+    args: { options: { ...options, left, right, top, bottom } }
   })
-}
 
-export const znFiltersPanel = (options, callback) => {
-  return client.call({
-    method: 'filtersPanel',
-    args: { options },
-    callback,
-    timeout: Infinity
-  })
+  console.log(id)
 }
 
 export const znLocalStorage = (method, key, item, callback) => {
-  return client.call({
+  return rpcClient.call({
     method: 'znLocalStorage',
     args: { method, key, item }
-  })
-}
-
-export const znResize = dimensions => {
-  return client.call({
-    method: 'resize',
-    args: { dimensions }
   })
 }
 
@@ -119,7 +83,7 @@ export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((res
   reader.onload = async e => {
     const arrayBuffer = reader.result
 
-    const response = await client.call({
+    const response = await rpcClient.call({
       method: 'znHttp',
       timeout: 60000,
       args: {
@@ -154,30 +118,10 @@ export const uploadFile = (formId, fieldId, file, data = {}) => new Promise((res
   file && reader.readAsArrayBuffer(file)
 })
 
-export const znPluginData = (namespace, method, route) => {
-  return client.call({
-    method: 'znPluginData',
-    timeout: 60000,
-    args: {
-      namespace: namespace,
-      method: method,
-      route: route,
-      options: {
-        params: {
-          id: 1
-        },
-        headers: {
-          'x-my-custom-plugin-header': 'hello'
-        }
-      }
-    }
-  })
-}
-
 const locationCache = {};
 
 export const locationAsync = (method, args = []) => {
-  return client.call({ method: 'location', args: { method, args } })
+  return rpcClient.call({ method: 'location', args: { method, args } })
 }
 
 export const $location = {

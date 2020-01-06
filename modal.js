@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { znConfirm, znMessage, client } from './post-rpc'
+import { znConfirm, znMessage, rpcClient, autoSize } from '@zenginehq/zengine-sdk'
 import { useSubscription, useRequestMoreRoom } from './hooks'
-import { sizer } from './resizer'
 
 const App = props => {
   const [parentBg, setParentBg] = useState('purple')
@@ -12,11 +11,11 @@ const App = props => {
   useSubscription('something-else', item => console.log('something else log:', item))
 
   useEffect(() => {
-    sizer.autoSize()
+    autoSize()
   })
 
   const context = () => {
-    client.call({ method: 'context', timeout: 60000 })
+    rpcClient.call({ method: 'context' })
       .then(console.log)
   }
 
@@ -45,7 +44,7 @@ const App = props => {
         color: 'white'
       }}
       onClick={e => {
-        client.call({ method: 'log-to-console', args: { payload: 'a message from the modal' } })
+        rpcClient.call({ method: 'child-to-parent', args: { key: 'log-to-console', payload: 'a message from the modal' } })
       }}
     >
       Log stuff to the consoles!
@@ -61,8 +60,8 @@ const App = props => {
         color: 'white'
       }}
       onClick={e => {
-        client.call({ method: 'background-update', args: { payload: parentBg } })
-        client.call({ method: 'something-else', args: { payload: 'yo something else' } })
+        rpcClient.call({ method: 'child-to-parent', args: { key: 'background-update', payload: parentBg } })
+        rpcClient.call({ method: 'child-to-parent', args: { key: 'something-else', payload: 'yo something else' } })
       }}
     >
       Change Main Background Color
@@ -78,7 +77,7 @@ const App = props => {
         color: 'white'
       }}
       onClick={e => {
-        client.call({ method: 'close', args: { payload: {} } })
+        rpcClient.call({ method: 'close', args: { key: 'close', payload: {} } })
       }}
     >
       Close
